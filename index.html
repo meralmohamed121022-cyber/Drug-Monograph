@@ -19,12 +19,22 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            overflow-x: hidden;
         }
 
-        .container {
+        /* Main Container */
+        .main-container {
+            padding: 20px;
             max-width: 1400px;
             margin: 0 auto;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .main-container.hidden {
+            transform: translateX(-100%);
+            opacity: 0;
+            position: absolute;
+            pointer-events: none;
         }
 
         /* Header Section */
@@ -34,6 +44,747 @@
             margin-bottom: 30px;
             animation: fadeInDown 0.8s ease;
         }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* Search Box */
+        .search-wrapper {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 20px 60px 20px 20px;
+            font-size: 20px;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            outline: none;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.95);
+        }
+
+        .search-box:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+            background: white;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: #667eea;
+            pointer-events: none;
+            transition: transform 0.3s ease;
+        }
+
+        .search-box:focus + .search-icon {
+            transform: translateY(-50%) rotate(90deg);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            color: white;
+            animation: fadeIn 1.2s ease;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Filter Buttons */
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeIn 1.3s ease;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        /* Drugs Grid */
+        .drugs-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            animation: fadeIn 1.4s ease;
+        }
+
+        /* Drug Card */
+        .drug-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drug-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .drug-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .drug-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .drug-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        .drug-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .drug-category {
+            display: inline-block;
+            padding: 5px 15px;
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            border-radius: 20px;
+            font-size: 12px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .drug-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Drug Detail Container */
+        .drug-detail-container {
+            display: none;
+            min-height: 100vh;
+            background: #f5f5f5;
+            animation: slideInFromRight 0.5s ease;
+        }
+
+        .drug-detail-container.active {
+            display: block;
+        }
+
+        /* Back Button with CSS Arrow */
+        .back-button-container {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1000;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            cursor: pointer;
+            padding: 15px 25px 15px 50px;
+            border-radius: 50px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        /* CSS Arrow Art */
+        .arrow-art {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+        }
+
+        .arrow-art::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 2px;
+            background: white;
+            top: 9px;
+            left: 0;
+            border-radius: 2px;
+        }
+
+        .arrow-art::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-left: 2px solid white;
+            border-bottom: 2px solid white;
+            transform: rotate(45deg);
+            top: 6px;
+            left: 0;
+        }
+
+        /* Drug Header */
+        .drug-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 80px 40px 40px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .drug-header-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .drug-header h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .drug-header-category {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* A4 Content Area */
+        .drug-content-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            background: #f5f5f5;
+        }
+
+        .drug-content-a4 {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideInFromRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            padding: 60px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .no-results-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Loading Animation */
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 20px;
+            padding: 40px;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 32px; }
+            .search-box { font-size: 16px; padding: 15px 50px 15px 15px; }
+            .drugs-container { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+            .stats-bar { flex-direction: column; gap: 15px; }
+            .drug-content-a4 { 
+                width: 100%; 
+                min-height: auto;
+                padding: 20px;
+            }
+            .back-button-container {
+                top: 15px;
+                left: 15px;
+            }
+            .back-btn {
+                padding: 12px 20px 12px 45px;
+                font-size: 16px;
+            }
+            .drug-header {
+                padding: 60px 20px 30px;
+            }
+            .drug-header h1 {
+                font-size: 32px;
+            }
+        }
+
+        @media print {
+            .back-button-container,
+            .drug-header {
+                display: none;
+            }
+            .drug-content-a4 {
+                box-shadow: none;
+                border-radius: 0;
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Container (Database View) -->
+    <div class="main-container" id="mainContainer">
+        <!-- Header -->
+        <div class="header">
+            <h1>💊 SP Drugs Database</h1>
+            <p>Comprehensive Pharmaceutical Reference Guide</p>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-wrapper">
+            <input 
+                type="text" 
+                class="search-box" 
+                id="searchBox" 
+                placeholder="Search for any drug... (e.g., Fexofenadine, Mounjaro, Aspirin)"
+                autocomplete="off"
+            >
+            <span class="search-icon">🔍</span>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number" id="totalDrugs">0</span>
+                <span class="stat-label">Total Drugs</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="displayedDrugs">0</span>
+                <span class="stat-label">Results Displayed</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="categories">0</span>
+                <span class="stat-label">Categories</span>
+            </div>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="filter-bar" id="filterBar">
+            <button class="filter-btn active" data-category="all">All Drugs</button>
+        </div>
+
+        <!-- Drugs Container -->
+        <div class="drugs-container" id="drugsContainer">
+            <div class="loading">Loading drug database</div>
+        </div>
+    </div>
+
+    <!-- Drug Detail Container (A4 View) -->
+    <div class="drug-detail-container" id="drugDetailContainer">
+        <!-- Back Button with CSS Arrow -->
+        <div class="back-button-container">
+            <button class="back-btn" onclick="closeDrugDetail()">
+                <span class="arrow-art"></span>
+                <span>Back to Database</span>
+            </button>
+        </div>
+
+        <!-- Drug Header -->
+        <div class="drug-header">
+            <span class="drug-header-icon" id="detailDrugIcon">💊</span>
+            <h1 id="detailDrugName">Drug Information</h1>
+            <span class="drug-header-category" id="detailDrugCategory">Category</span>
+        </div>
+
+        <!-- A4 Content Area -->
+        <div class="drug-content-wrapper">
+            <div class="drug-content-a4" id="drugContentA4">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p style="color: #667eea; font-size: 18px;">Loading drug information...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 🎯 DRUG DATABASE
+        const drugsData = [
+            {
+                name: "Fexofenadine",
+                file: "FEXOFENADINE.html",
+                category: "Antihistamines",
+                description: "Non-sedating second-generation H1 antihistamine for allergic rhinitis and chronic urticaria",
+                icon: "🤧"
+            },
+            {
+                name: "Mounjaro",
+                file: "mounjaro.html",
+                category: "Antidiabetic",
+                description: "Tirzepatide - GLP-1/GIP dual agonist for type 2 diabetes and weight management",
+                icon: "💉"
+            }
+            // ... ADD MORE DRUGS HERE
+        ];
+
+        // 🔍 Setup Fuzzy Search with Fuse.js
+        const fuseOptions = {
+            keys: ['name', 'category', 'description'],
+            threshold: 0.3,
+            distance: 100,
+            minMatchCharLength: 1,
+            includeScore: true
+        };
+
+        const fuse = new Fuse(drugsData, fuseOptions);
+
+        // 📊 Page Elements
+        const searchBox = document.getElementById('searchBox');
+        const container = document.getElementById('drugsContainer');
+        const filterBar = document.getElementById('filterBar');
+        const totalDrugsEl = document.getElementById('totalDrugs');
+        const displayedDrugsEl = document.getElementById('displayedDrugs');
+        const categoriesEl = document.getElementById('categories');
+        const mainContainer = document.getElementById('mainContainer');
+        const drugDetailContainer = document.getElementById('drugDetailContainer');
+        const detailDrugName = document.getElementById('detailDrugName');
+        const detailDrugIcon = document.getElementById('detailDrugIcon');
+        const detailDrugCategory = document.getElementById('detailDrugCategory');
+        const drugContentA4 = document.getElementById('drugContentA4');
+
+        let currentFilter = 'all';
+
+        // 🎨 Display Drugs Function
+        function displayDrugs(drugs) {
+            container.innerHTML = '';
+            
+            if (drugs.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">😔</div>
+                        <div>No results found</div>
+                    </div>
+                `;
+                displayedDrugsEl.textContent = '0';
+                return;
+            }
+
+            drugs.forEach((drug, index) => {
+                const card = document.createElement('div');
+                card.className = 'drug-card';
+                card.style.animationDelay = `${index * 0.05}s`;
+                
+                card.innerHTML = `
+                    <div class="drug-icon">${drug.icon || '💊'}</div>
+                    <span class="drug-category">${drug.category}</span>
+                    <div class="drug-name">${drug.name}</div>
+                    <p class="drug-description">${drug.description}</p>
+                `;
+                
+                // Click handler
+                card.addEventListener('click', () => {
+                    openDrugDetail(drug);
+                });
+                
+                container.appendChild(card);
+            });
+
+            displayedDrugsEl.textContent = drugs.length;
+        }
+
+        // 🔓 Open Drug Detail (A4 View)
+        async function openDrugDetail(drug) {
+            // Hide main container and show detail
+            mainContainer.classList.add('hidden');
+            drugDetailContainer.classList.add('active');
+            
+            // Update header
+            detailDrugName.textContent = drug.name;
+            detailDrugIcon.textContent = drug.icon || '💊';
+            detailDrugCategory.textContent = drug.category;
+            
+            // Show loading
+            drugContentA4.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p style="color: #667eea; font-size: 18px;">Loading drug information...</p>
+                </div>
+            `;
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+
+            // Fetch drug data
+            try {
+                const response = await fetch(drug.file);
+                if (!response.ok) throw new Error('File not found');
+                
+                const htmlContent = await response.text();
+                drugContentA4.innerHTML = htmlContent;
+            } catch (error) {
+                drugContentA4.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px;">
+                        <div style="font-size: 80px; margin-bottom: 20px;">❌</div>
+                        <h2 style="color: #e74c3c; margin-bottom: 15px;">Error Loading Drug Data</h2>
+                        <p style="color: #666; font-size: 18px; margin-bottom: 10px;">
+                            File "<strong>${drug.file}</strong>" could not be loaded.
+                        </p>
+                        <p style="color: #999; font-size: 14px;">
+                            Make sure the file is uploaded to your GitHub repository.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        // 🔒 Close Drug Detail
+        function closeDrugDetail() {
+            mainContainer.classList.remove('hidden');
+            drugDetailContainer.classList.remove('active');
+            window.scrollTo(0, 0);
+        }
+
+        // ESC key to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && drugDetailContainer.classList.contains('active')) {
+                closeDrugDetail();
+            }
+        });
+
+        // 🔍 Search
+        searchBox.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.trim();
+            
+            let filteredData = drugsData;
+            
+            if (currentFilter !== 'all') {
+                filteredData = drugsData.filter(drug => drug.category === currentFilter);
+            }
+            
+            if (searchTerm === '') {
+                displayDrugs(filteredData);
+            } else {
+                const fuse = new Fuse(filteredData, fuseOptions);
+                const results = fuse.search(searchTerm);
+                const searchResults = results.map(result => result.item);
+                displayDrugs(searchResults);
+            }
+        });
+
+        // 🏷️ Create Filters
+        function createFilterButtons() {
+            const categories = [...new Set(drugsData.map(d => d.category))];
+            
+            categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.setAttribute('data-category', category);
+                btn.textContent = category;
+                
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    currentFilter = category;
+                    const filtered = drugsData.filter(drug => drug.category === category);
+                    displayDrugs(filtered);
+                    searchBox.value = '';
+                });
+                
+                filterBar.appendChild(btn);
+            });
+            
+            const allBtn = filterBar.querySelector('[data-category="all"]');
+            allBtn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                allBtn.classList.add('active');
+                currentFilter = 'all';
+                displayDrugs(drugsData);
+                searchBox.value = '';
+            });
+        }
+
+        // 📊 Update Stats
+        function updateStats() {
+            totalDrugsEl.textContent = drugsData.length;
+            displayedDrugsEl.textContent = drugsData.length;
+            
+            const uniqueCategories = new Set(drugsData.map(d => d.category));
+            categoriesEl.textContent = uniqueCategories.size;
+        }
+
+        // 🚀 Initialize
+        window.addEventListener('load', () => {
+            displayDrugs(drugsData);
+            updateStats();
+            createFilterButtons();
+        });
+    </script>
+</body>
+</html>
 
         .header h1 {
             font-size: 48px;
