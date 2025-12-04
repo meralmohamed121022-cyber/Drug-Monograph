@@ -336,20 +336,19 @@
             font-weight: 600;
         }
 
-        /* Content Wrapper - بس container عادي بدون styling للمحتوى! */
+        /* Content Wrapper - بدون حدود! */
         .drug-content-wrapper {
-            display: flex;
-            justify-content: center;
-            padding: 20px;
             background: #f0f0f0;
+            padding: 0;
+            width: 100%;
         }
 
         .drug-content-wide {
             width: 100%;
             background: white;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
             min-height: 80vh;
-            /* بس كده! بدون أي styling تاني - المحتوى هيظهر زي ما هو من الفايل */
+            overflow-x: auto;
+            /* بدون أي حدود - المحتوى يعرض زي ما هو! */
         }
 
         /* Loading Spinner */
@@ -475,9 +474,6 @@
             .drug-header-icon {
                 font-size: 60px;
             }
-            .drug-content-wrapper {
-                padding: 10px;
-            }
         }
 
         @media (max-width: 480px) {
@@ -492,8 +488,6 @@
                 display: none;
             }
             .drug-content-wide {
-                box-shadow: none;
-                margin: 0;
                 padding: 0;
             }
         }
@@ -564,7 +558,7 @@
             <span class="drug-header-category" id="detailDrugCategory">Category</span>
         </div>
 
-        <!-- Wide Content Area - بيعرض المحتوى زي ما هو! -->
+        <!-- Wide Content Area - Full Width بدون قيود! -->
         <div class="drug-content-wrapper">
             <div class="drug-content-wide" id="drugContentWide">
                 <div class="loading-spinner">
