@@ -235,7 +235,7 @@
         .drug-detail-container {
             display: none;
             min-height: 100vh;
-            background: #f5f5f5;
+            background: #f0f0f0;
             animation: slideInFromRight 0.5s ease;
         }
 
@@ -246,8 +246,8 @@
         /* Back Button with CSS Arrow */
         .back-button-container {
             position: fixed;
-            top: 30px;
-            left: 30px;
+            top: 20px;
+            left: 20px;
             z-index: 1000;
         }
 
@@ -255,7 +255,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             cursor: pointer;
-            padding: 15px 25px 15px 50px;
+            padding: 15px 30px 15px 55px;
             border-radius: 50px;
             color: white;
             font-size: 18px;
@@ -276,33 +276,33 @@
         /* CSS Arrow Art */
         .arrow-art {
             position: absolute;
-            left: 18px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
         }
 
         .arrow-art::before {
             content: '';
             position: absolute;
-            width: 12px;
-            height: 2px;
+            width: 16px;
+            height: 3px;
             background: white;
-            top: 9px;
-            left: 0;
+            top: 11px;
+            left: 2px;
             border-radius: 2px;
         }
 
         .arrow-art::after {
             content: '';
             position: absolute;
-            width: 8px;
-            height: 8px;
-            border-left: 2px solid white;
-            border-bottom: 2px solid white;
+            width: 10px;
+            height: 10px;
+            border-left: 3px solid white;
+            border-bottom: 3px solid white;
             transform: rotate(45deg);
-            top: 6px;
+            top: 7px;
             left: 0;
         }
 
@@ -330,28 +330,29 @@
         .drug-header-category {
             display: inline-block;
             background: rgba(255,255,255,0.2);
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-size: 16px;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: 18px;
             font-weight: 600;
         }
 
-        /* A4 Content Area */
+        /* Wide Content Area */
         .drug-content-wrapper {
             display: flex;
             justify-content: center;
             padding: 40px 20px;
-            background: #f5f5f5;
+            background: #f0f0f0;
         }
 
-        .drug-content-a4 {
-            width: 210mm;
-            min-height: 297mm;
+        .drug-content-wide {
+            width: 100%;
+            max-width: 1200px;
             background: white;
-            padding: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            border-radius: 10px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            border-radius: 15px;
             margin-bottom: 40px;
+            min-height: 80vh;
         }
 
         /* Loading Spinner */
@@ -454,29 +455,52 @@
         }
 
         /* Responsive */
+        @media (max-width: 1024px) {
+            .drug-content-wide {
+                max-width: 900px;
+                padding: 40px;
+            }
+        }
+
         @media (max-width: 768px) {
             .header h1 { font-size: 32px; }
             .search-box { font-size: 16px; padding: 15px 50px 15px 15px; }
             .drugs-container { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
             .stats-bar { flex-direction: column; gap: 15px; }
-            .drug-content-a4 { 
-                width: 100%; 
-                min-height: auto;
-                padding: 20px;
+            .drug-content-wide { 
+                width: 100%;
+                max-width: 100%;
+                padding: 25px;
+                border-radius: 0;
             }
             .back-button-container {
-                top: 15px;
-                left: 15px;
+                top: 10px;
+                left: 10px;
             }
             .back-btn {
-                padding: 12px 20px 12px 45px;
+                padding: 12px 25px 12px 50px;
                 font-size: 16px;
             }
             .drug-header {
-                padding: 60px 20px 30px;
+                padding: 70px 20px 30px;
             }
             .drug-header h1 {
                 font-size: 32px;
+            }
+            .drug-header-icon {
+                font-size: 60px;
+            }
+            .drug-content-wrapper {
+                padding: 20px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .drug-content-wide {
+                padding: 20px;
+            }
+            .drug-header h1 {
+                font-size: 26px;
             }
         }
 
@@ -485,11 +509,12 @@
             .drug-header {
                 display: none;
             }
-            .drug-content-a4 {
+            .drug-content-wide {
                 box-shadow: none;
                 border-radius: 0;
                 margin: 0;
-                padding: 0;
+                padding: 20px;
+                max-width: 100%;
             }
         }
     </style>
@@ -542,7 +567,7 @@
         </div>
     </div>
 
-    <!-- Drug Detail Container (A4 View) -->
+    <!-- Drug Detail Container (Wide View) -->
     <div class="drug-detail-container" id="drugDetailContainer">
         <!-- Back Button with CSS Arrow -->
         <div class="back-button-container">
@@ -559,12 +584,12 @@
             <span class="drug-header-category" id="detailDrugCategory">Category</span>
         </div>
 
-        <!-- A4 Content Area -->
+        <!-- Wide Content Area -->
         <div class="drug-content-wrapper">
-            <div class="drug-content-a4" id="drugContentA4">
+            <div class="drug-content-wide" id="drugContentWide">
                 <div class="loading-spinner">
                     <div class="spinner"></div>
-                    <p style="color: #667eea; font-size: 18px;">Loading drug information...</p>
+                    <p style="color: #667eea; font-size: 18px; font-weight: 600;">Loading drug information...</p>
                 </div>
             </div>
         </div>
@@ -613,7 +638,7 @@
         const detailDrugName = document.getElementById('detailDrugName');
         const detailDrugIcon = document.getElementById('detailDrugIcon');
         const detailDrugCategory = document.getElementById('detailDrugCategory');
-        const drugContentA4 = document.getElementById('drugContentA4');
+        const drugContentWide = document.getElementById('drugContentWide');
 
         let currentFilter = 'all';
 
@@ -655,7 +680,7 @@
             displayedDrugsEl.textContent = drugs.length;
         }
 
-        // 🔓 Open Drug Detail (A4 View)
+        // 🔓 Open Drug Detail (Wide View)
         async function openDrugDetail(drug) {
             // Hide main container and show detail
             mainContainer.classList.add('hidden');
@@ -667,10 +692,10 @@
             detailDrugCategory.textContent = drug.category;
             
             // Show loading
-            drugContentA4.innerHTML = `
+            drugContentWide.innerHTML = `
                 <div class="loading-spinner">
                     <div class="spinner"></div>
-                    <p style="color: #667eea; font-size: 18px;">Loading drug information...</p>
+                    <p style="color: #667eea; font-size: 18px; font-weight: 600;">Loading drug information...</p>
                 </div>
             `;
 
@@ -683,16 +708,16 @@
                 if (!response.ok) throw new Error('File not found');
                 
                 const htmlContent = await response.text();
-                drugContentA4.innerHTML = htmlContent;
+                drugContentWide.innerHTML = htmlContent;
             } catch (error) {
-                drugContentA4.innerHTML = `
-                    <div style="text-align: center; padding: 60px 20px;">
-                        <div style="font-size: 80px; margin-bottom: 20px;">❌</div>
-                        <h2 style="color: #e74c3c; margin-bottom: 15px;">Error Loading Drug Data</h2>
-                        <p style="color: #666; font-size: 18px; margin-bottom: 10px;">
+                drugContentWide.innerHTML = `
+                    <div style="text-align: center; padding: 80px 20px;">
+                        <div style="font-size: 100px; margin-bottom: 30px;">❌</div>
+                        <h2 style="color: #e74c3c; margin-bottom: 20px; font-size: 32px;">Error Loading Drug Data</h2>
+                        <p style="color: #666; font-size: 20px; margin-bottom: 15px;">
                             File "<strong>${drug.file}</strong>" could not be loaded.
                         </p>
-                        <p style="color: #999; font-size: 14px;">
+                        <p style="color: #999; font-size: 16px;">
                             Make sure the file is uploaded to your GitHub repository.
                         </p>
                     </div>
