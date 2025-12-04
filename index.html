@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💊 SP Drugs Database - Pharmaceutical Reference</title>
+    
+    <!-- Fuse.js CDN for Fuzzy Search -->
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* Search Box */
+        .search-wrapper {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 20px 60px 20px 20px;
+            font-size: 20px;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            outline: none;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.95);
+        }
+
+        .search-box:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+            background: white;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: #667eea;
+            pointer-events: none;
+            transition: transform 0.3s ease;
+        }
+
+        .search-box:focus + .search-icon {
+            transform: translateY(-50%) rotate(90deg);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            color: white;
+            animation: fadeIn 1.2s ease;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Filter Buttons */
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeIn 1.3s ease;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        /* Drugs Grid */
+        .drugs-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            animation: fadeIn 1.4s ease;
+        }
+
+        /* Drug Card */
+        .drug-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drug-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .drug-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .drug-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .drug-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        .drug-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .drug-category {
+            display: inline-block;
+            padding: 5px 15px;
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            border-radius: 20px;
+            font-size: 12px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .drug-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            padding: 60px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .no-results-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Loading Animation */
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 20px;
+            padding: 40px;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 32px; }
+            .search-box { font-size: 16px; padding: 15px 50px 15px 15px; }
+            .drugs-container { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+            .stats-bar { flex-direction: column; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>💊 SP Drugs Database</h1>
+            <p>Comprehensive Pharmaceutical Reference Guide</p>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-wrapper">
+            <input 
+                type="text" 
+                class="search-box" 
+                id="searchBox" 
+                placeholder="Search for any drug... (e.g., Fexofenadine, Aspirin, Paracetamol)"
+                autocomplete="off"
+            >
+            <span class="search-icon">🔍</span>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number" id="totalDrugs">0</span>
+                <span class="stat-label">Total Drugs</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="displayedDrugs">0</span>
+                <span class="stat-label">Results Displayed</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="categories">0</span>
+                <span class="stat-label">Categories</span>
+            </div>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="filter-bar" id="filterBar">
+            <button class="filter-btn active" data-category="all">All Drugs</button>
+        </div>
+
+        <!-- Drugs Container -->
+        <div class="drugs-container" id="drugsContainer">
+            <div class="loading">Loading drug database</div>
+        </div>
+    </div>
+
+    <script>
+        // 🎯 DRUG DATABASE - Add your 5000 drugs here
+        const drugsData = [
+            {
+                name: "Fexofenadine",
+                file: "fexofenadine.html",
+                category: "Antihistamines",
+                description: "Non-sedating second-generation H1 antihistamine for allergic rhinitis and chronic urticaria",
+                icon: "🤧"
+            },
+            {
+                name: "Aspirin",
+                file: "aspirin.html",
+                category: "Analgesics",
+                description: "Pain reliever and anti-inflammatory medication",
+                icon: "💊"
+            },
+            {
+                name: "Paracetamol",
+                file: "paracetamol.html",
+                category: "Analgesics",
+                description: "Acetaminophen - Pain and fever reducer",
+                icon: "🌡️"
+            },
+            {
+                name: "Amoxicillin",
+                file: "amoxicillin.html",
+                category: "Antibiotics",
+                description: "Penicillin-type antibiotic for bacterial infections",
+                icon: "💉"
+            },
+            {
+                name: "Metformin",
+                file: "metformin.html",
+                category: "Antidiabetic",
+                description: "Oral diabetes medication for type 2 diabetes",
+                icon: "🩺"
+            },
+            {
+                name: "Omeprazole",
+                file: "omeprazole.html",
+                category: "Gastrointestinal",
+                description: "Proton pump inhibitor for acid reflux",
+                icon: "💊"
+            },
+            {
+                name: "Atorvastatin",
+                file: "atorvastatin.html",
+                category: "Cardiovascular",
+                description: "Statin medication to lower cholesterol",
+                icon: "❤️"
+            },
+            {
+                name: "Losartan",
+                file: "losartan.html",
+                category: "Antihypertensive",
+                description: "Angiotensin receptor blocker for high blood pressure",
+                icon: "🩸"
+            },
+            {
+                name: "Cetirizine",
+                file: "cetirizine.html",
+                category: "Antihistamines",
+                description: "Second-generation antihistamine for hay fever and allergic reactions",
+                icon: "🤧"
+            },
+            {
+                name: "Azithromycin",
+                file: "azithromycin.html",
+                category: "Antibiotics",
+                description: "Macrolide antibiotic for respiratory infections",
+                icon: "💉"
+            },
+            {
+                name: "Ibuprofen",
+                file: "ibuprofen.html",
+                category: "Analgesics",
+                description: "NSAID for pain, fever, and inflammation",
+                icon: "💊"
+            },
+            {
+                name: "Loratadine",
+                file: "loratadine.html",
+                category: "Antihistamines",
+                description: "Non-drowsy antihistamine for seasonal allergies",
+                icon: "🤧"
+            },
+            {
+                name: "Diphenhydramine",
+                file: "diphenhydramine.html",
+                category: "Antihistamines",
+                description: "First-generation antihistamine with sedative properties",
+                icon: "😴"
+            }
+            // ... ADD YOUR REMAINING 4987 DRUGS HERE
+        ];
+
+        // 🔍 Setup Fuzzy Search with Fuse.js
+        const fuseOptions = {
+            keys: ['name', 'category', 'description'],
+            threshold: 0.3,
+            distance: 100,
+            minMatchCharLength: 1,
+            includeScore: true
+        };
+
+        const fuse = new Fuse(drugsData, fuseOptions);
+
+        // 📊 Page Elements
+        const searchBox = document.getElementById('searchBox');
+        const container = document.getElementById('drugsContainer');
+        const filterBar = document.getElementById('filterBar');
+        const totalDrugsEl = document.getElementById('totalDrugs');
+        const displayedDrugsEl = document.getElementById('displayedDrugs');
+        const categoriesEl = document.getElementById('categories');
+
+        let currentFilter = 'all';
+
+        // 🎨 Display Drugs Function
+        function displayDrugs(drugs) {
+            container.innerHTML = '';
+            
+            if (drugs.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">😔</div>
+                        <div>No results found</div>
+                    </div>
+                `;
+                displayedDrugsEl.textContent = '0';
+                return;
+            }
+
+            drugs.forEach((drug, index) => {
+                const card = document.createElement('div');
+                card.className = 'drug-card';
+                card.style.animationDelay = `${index * 0.05}s`;
+                
+                card.innerHTML = `
+                    <div class="drug-icon">${drug.icon || '💊'}</div>
+                    <span class="drug-category">${drug.category}</span>
+                    <a href="${drug.file}" class="drug-name" target="_blank">${drug.name}</a>
+                    <p class="drug-description">${drug.description}</p>
+                `;
+                
+                // Click handler - opens drug HTML file
+                card.addEventListener('click', () => {
+                    window.open(drug.file, '_blank');
+                });
+                
+                container.appendChild(card);
+            });
+
+            displayedDrugsEl.textContent = drugs.length;
+        }
+
+        // 🔍 Search with Fuzzy Search
+        searchBox.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.trim();
+            
+            let filteredData = drugsData;
+            
+            // Apply category filter
+            if (currentFilter !== 'all') {
+                filteredData = drugsData.filter(drug => drug.category === currentFilter);
+            }
+            
+            // Apply search
+            if (searchTerm === '') {
+                displayDrugs(filteredData);
+            } else {
+                const fuse = new Fuse(filteredData, fuseOptions);
+                const results = fuse.search(searchTerm);
+                const searchResults = results.map(result => result.item);
+                displayDrugs(searchResults);
+            }
+        });
+
+        // 🏷️ Create Category Filters
+        function createFilterButtons() {
+            const categories = [...new Set(drugsData.map(d => d.category))];
+            
+            categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.setAttribute('data-category', category);
+                btn.textContent = category;
+                
+                btn.addEventListener('click', () => {
+                    // Update active state
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    currentFilter = category;
+                    const filtered = drugsData.filter(drug => drug.category === category);
+                    displayDrugs(filtered);
+                    searchBox.value = '';
+                });
+                
+                filterBar.appendChild(btn);
+            });
+            
+            // All button handler
+            const allBtn = filterBar.querySelector('[data-category="all"]');
+            allBtn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                allBtn.classList.add('active');
+                currentFilter = 'all';
+                displayDrugs(drugsData);
+                searchBox.value = '';
+            });
+        }
+
+        // 📊 Update Statistics
+        function updateStats() {
+            totalDrugsEl.textContent = drugsData.length;
+            displayedDrugsEl.textContent = drugsData.length;
+            
+            const uniqueCategories = new Set(drugsData.map(d => d.category));
+            categoriesEl.textContent = uniqueCategories.size;
+        }
+
+        // 🚀 Initialize on Page Load
+        window.addEventListener('load', () => {
+            displayDrugs(drugsData);
+            updateStats();
+            createFilterButtons();
+        });
+    </script>
+</body>
+</html>
