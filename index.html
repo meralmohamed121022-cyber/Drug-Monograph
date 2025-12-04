@@ -201,7 +201,6 @@
             font-weight: bold;
             color: #667eea;
             margin-bottom: 10px;
-            text-decoration: none;
             display: block;
         }
 
@@ -220,6 +219,124 @@
             color: #666;
             font-size: 14px;
             line-height: 1.6;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: slideUp 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 32px;
+            cursor: pointer;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 5px;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            text-align: center;
+            padding: 60px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* No Results */
@@ -295,6 +412,8 @@
             .search-box { font-size: 16px; padding: 15px 50px 15px 15px; }
             .drugs-container { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
             .stats-bar { flex-direction: column; gap: 15px; }
+            .modal-content { width: 95%; max-height: 90vh; }
+            .modal-header h2 { font-size: 22px; }
         }
     </style>
 </head>
@@ -312,7 +431,7 @@
                 type="text" 
                 class="search-box" 
                 id="searchBox" 
-                placeholder="Search for any drug... (e.g., Fexofenadine, Aspirin, Paracetamol)"
+                placeholder="Search for any drug... (e.g., Fexofenadine, Mounjaro, Aspirin)"
                 autocomplete="off"
             >
             <span class="search-icon">🔍</span>
@@ -345,15 +464,38 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div id="drugModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Drug Information</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Loading drug information...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 🎯 DRUG DATABASE
         const drugsData = [
             {
                 name: "Fexofenadine",
-                file: "FEXOFENADINE.html",  // ✅ Same as uploaded file name
+                file: "FEXOFENADINE.html",
                 category: "Antihistamines",
                 description: "Non-sedating second-generation H1 antihistamine for allergic rhinitis and chronic urticaria",
                 icon: "🤧"
+            },
+            {
+                name: "Mounjaro",
+                file: "mounjaro.html",
+                category: "Antidiabetic",
+                description: "Tirzepatide - GLP-1/GIP dual agonist for type 2 diabetes",
+                icon: "💉"
             }
             // ... ADD MORE DRUGS HERE
         ];
@@ -376,6 +518,9 @@
         const totalDrugsEl = document.getElementById('totalDrugs');
         const displayedDrugsEl = document.getElementById('displayedDrugs');
         const categoriesEl = document.getElementById('categories');
+        const modal = document.getElementById('drugModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
 
         let currentFilter = 'all';
 
@@ -402,13 +547,13 @@
                 card.innerHTML = `
                     <div class="drug-icon">${drug.icon || '💊'}</div>
                     <span class="drug-category">${drug.category}</span>
-                    <a href="${drug.file}" class="drug-name" target="_blank">${drug.name}</a>
+                    <div class="drug-name">${drug.name}</div>
                     <p class="drug-description">${drug.description}</p>
                 `;
                 
-                // Click handler - opens drug HTML file
+                // Click handler - opens modal with drug data
                 card.addEventListener('click', () => {
-                    window.open(drug.file, '_blank');
+                    openDrugModal(drug);
                 });
                 
                 container.appendChild(card);
@@ -416,6 +561,53 @@
 
             displayedDrugsEl.textContent = drugs.length;
         }
+
+        // 🔓 Open Modal Function
+        async function openDrugModal(drug) {
+            modal.classList.add('active');
+            modalTitle.textContent = `${drug.icon} ${drug.name}`;
+            modalBody.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Loading drug information...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(drug.file);
+                if (!response.ok) throw new Error('File not found');
+                
+                const htmlContent = await response.text();
+                modalBody.innerHTML = htmlContent;
+            } catch (error) {
+                modalBody.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                        <h3>❌ Error Loading Drug Data</h3>
+                        <p>File "${drug.file}" could not be loaded.</p>
+                        <p style="font-size: 14px; color: #999;">Make sure the file is uploaded to your repository.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 🔒 Close Modal Function
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
 
         // 🔍 Search with Fuzzy Search
         searchBox.addEventListener('input', (e) => {
@@ -450,7 +642,6 @@
                 btn.textContent = category;
                 
                 btn.addEventListener('click', () => {
-                    // Update active state
                     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     
