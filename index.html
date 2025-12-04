@@ -346,13 +346,238 @@
 
         .drug-content-wide {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1400px;
             background: white;
             padding: 50px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.15);
             border-radius: 15px;
             margin-bottom: 40px;
             min-height: 80vh;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        /* 🎨 STYLING FOR LOADED CONTENT (من الفايلات الخارجية) */
+        
+        /* Headers in loaded content */
+        .drug-content-wide h1 {
+            font-size: 36px;
+            color: #667eea;
+            margin: 30px 0 20px 0;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+            font-weight: 700;
+        }
+
+        .drug-content-wide h2 {
+            font-size: 28px;
+            color: #764ba2;
+            margin: 25px 0 15px 0;
+            font-weight: 600;
+            padding-left: 15px;
+            border-left: 5px solid #764ba2;
+        }
+
+        .drug-content-wide h3 {
+            font-size: 22px;
+            color: #555;
+            margin: 20px 0 12px 0;
+            font-weight: 600;
+        }
+
+        .drug-content-wide h4 {
+            font-size: 19px;
+            color: #666;
+            margin: 18px 0 10px 0;
+            font-weight: 600;
+        }
+
+        /* Paragraphs */
+        .drug-content-wide p {
+            margin: 15px 0;
+            font-size: 17px;
+            line-height: 1.8;
+            color: #444;
+        }
+
+        /* Lists */
+        .drug-content-wide ul,
+        .drug-content-wide ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        .drug-content-wide li {
+            margin: 10px 0;
+            font-size: 17px;
+            line-height: 1.7;
+            color: #444;
+        }
+
+        .drug-content-wide ul li {
+            list-style-type: disc;
+        }
+
+        .drug-content-wide ol li {
+            list-style-type: decimal;
+        }
+
+        /* 📊 TABLES STYLING - الأهم! */
+        .drug-content-wide table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .drug-content-wide thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .drug-content-wide thead th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 17px;
+            letter-spacing: 0.5px;
+        }
+
+        .drug-content-wide tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.3s ease;
+        }
+
+        .drug-content-wide tbody tr:hover {
+            background-color: #f8f9ff;
+        }
+
+        .drug-content-wide tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .drug-content-wide td {
+            padding: 16px 15px;
+            font-size: 16px;
+            color: #444;
+            vertical-align: top;
+        }
+
+        .drug-content-wide tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* First column bold */
+        .drug-content-wide td:first-child {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        /* Strong/Bold text */
+        .drug-content-wide strong,
+        .drug-content-wide b {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        /* Code/Technical terms */
+        .drug-content-wide code {
+            background: #f4f4f4;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 15px;
+            color: #e74c3c;
+        }
+
+        /* Blockquotes */
+        .drug-content-wide blockquote {
+            margin: 20px 0;
+            padding: 20px 25px;
+            background: #f8f9ff;
+            border-left: 5px solid #667eea;
+            font-style: italic;
+            color: #555;
+        }
+
+        /* Dividers */
+        .drug-content-wide hr {
+            border: none;
+            border-top: 2px solid #e0e0e0;
+            margin: 30px 0;
+        }
+
+        /* Links */
+        .drug-content-wide a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .drug-content-wide a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        /* Buttons in content */
+        .drug-content-wide button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+
+        .drug-content-wide button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Images in content */
+        .drug-content-wide img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Sections/Divs with specific classes */
+        .drug-content-wide .warning,
+        .drug-content-wide .alert {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .drug-content-wide .danger,
+        .drug-content-wide .error {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .drug-content-wide .success,
+        .drug-content-wide .info {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
         }
 
         /* Loading Spinner */
@@ -457,7 +682,7 @@
         /* Responsive */
         @media (max-width: 1024px) {
             .drug-content-wide {
-                max-width: 900px;
+                max-width: 95%;
                 padding: 40px;
             }
         }
@@ -472,7 +697,14 @@
                 max-width: 100%;
                 padding: 25px;
                 border-radius: 0;
+                font-size: 15px;
             }
+            .drug-content-wide h1 { font-size: 28px; }
+            .drug-content-wide h2 { font-size: 24px; }
+            .drug-content-wide h3 { font-size: 20px; }
+            .drug-content-wide table { font-size: 14px; }
+            .drug-content-wide td,
+            .drug-content-wide th { padding: 12px 10px; }
             .back-button-container {
                 top: 10px;
                 left: 10px;
@@ -498,9 +730,17 @@
         @media (max-width: 480px) {
             .drug-content-wide {
                 padding: 20px;
+                font-size: 14px;
             }
             .drug-header h1 {
                 font-size: 26px;
+            }
+            .drug-content-wide table {
+                font-size: 13px;
+            }
+            .drug-content-wide td,
+            .drug-content-wide th {
+                padding: 10px 8px;
             }
         }
 
